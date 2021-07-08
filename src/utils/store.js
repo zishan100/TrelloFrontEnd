@@ -1,35 +1,52 @@
 import axios from 'axios';
 
 export const fetchData = async () => {
-      
-    try {
-     let response=await axios.get(`http://localhost:5000/getlist/`)
-               
-      let { data:{result}} = response;
-        
-      return {
+       
+           
+
+  try {
+    let response = await axios.get(`http://localhost:5000/getlist/`);
+             
+    let { data: { result } } = response;
+    
+    
+    
+    console.log(result);
+       let  data= {
          lists: {
-           'list-1': {
-           id: 'list-1',
+           'Todo': {
+           id: 'Todo',
            title: 'Todo',
-           cards:result
+           cards:[]
           },
-           'list-2': {
-           id: 'list-2',
+           'progress': {
+           id: 'progress',
            title: 'progress',
            cards:[]
           },
-          'list-3': {
-           id: 'list-3',
+          'Done': {
+           id: 'Done',
            title: 'Done',
            cards:[]
           } 
-           
-      },
-       listIds:['list-1','list-2','list-3']  
-      }
-    }
-    catch (error) {
+       },
+       listIds:['Todo','progress','Done']  
+      }  
+       
+        result.forEach(res => {
+          console.log(data.lists[res.status].title);
+          if(res.status === data.lists[res.status].title) {
+            data.lists[res.status].cards.push(res);
+          }
+               
+        });
+     
+     console.log(data);
+                       
+      
+    return data;
+
+   }catch (error) {
         console.log('Error Occured', error); 
        
      } 
@@ -41,24 +58,24 @@ export const fetchData = async () => {
 
 export const store = {
   lists: {
-    'list-1': {
-      id: 'list-1',
+    'Todo': {
+      id: 'Todo',
       title: 'Todo',
       cards:[]
     },
-    'list-2': {
-      id: 'list-2',
+    'progress': {
+      id: 'progress',
       title: 'progress',
       cards: []
     },
-    'list-3': {
-      id: 'list-3',
+    'Done': {
+      id: 'Done',
       title: 'Done',
       cards: []
     }
            
   },
-  listIds: ['list-1', 'list-2', 'list-3']
+  listIds: ['Todo','progress','Done']
 };
 
 

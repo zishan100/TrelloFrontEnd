@@ -47,35 +47,39 @@ export default function App () {
    
    const addMoreCard = (title, listId) => {
     console.log(title, listId);
-
-    const newCardId = uuid();
-    const newCard = {
-      id: newCardId,
-      title,
-    };
+      console.log(data.lists[listId].title);   
+    
+    
      
      axios.post('http://localhost:5000/createtitle/', {
-        title:title
+       title: title,
+       status:data.lists[listId].title
      })
        .then(response => {
-          console.log(response);
+         if (response.status === 200) {
+           let { data:{result}} = response;
+            const newCard = {
+              id:result.id,
+              title,
+            };
+        const list = data.lists[listId];
+        list.cards = [...list.cards, newCard];
+        console.log(list.cards);
+        const newState = {
+          ...data,
+          lists: {
+            ...data.lists,
+            [listId]: list,
+          },
+        };
+         setData(newState);
+        }
+       
        })
        .catch(err => {
          console.log(err);
        })
-      
-    const list = data.lists[listId];
-    list.cards = [...list.cards, newCard];
-    console.log(list.cards);
-    const newState = {
-      ...data,
-      lists: {
-        ...data.lists,
-        [listId]: list,
-      },
-    };
-
-    setData(newState);
+    
     
   };
 
@@ -119,8 +123,7 @@ export default function App () {
          
     
     console.log('destination', destination, 'source', source, draggableId);
-
-    if (!destination) {
+    if(!destination) {
       return;
     }
     if (type === 'list') {
@@ -159,8 +162,20 @@ export default function App () {
           [destinationList.id]: destinationList,
         },
       };
-      setData(newState);
+      setData(newState); 
+     
+    axios.post('http://localhost:5000/updatingStatus/', {
+       id:draggableId.toString(),
+       status:destination.droppableId
+     }).then(response => {
+           
+       console.log(response);
+      
+     }).catch(err => {
+       console.log(err);
+    })
     }
+  
   };
    
   return (
